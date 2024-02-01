@@ -1,4 +1,4 @@
-package pw.react.backend.services;
+package pw.react.backend.services.impl;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pw.react.backend.openapi.OpenApiConfig;
 import pw.react.backend.security.jwt.services.JwtConfig;
+import pw.react.backend.services.HttpService;
 
 import java.util.*;
 

@@ -1,8 +1,9 @@
-package pw.react.backend.services;
+package pw.react.backend.services.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
+import pw.react.backend.services.HttpService;
 
 class HttpBaseService implements HttpService {
 
