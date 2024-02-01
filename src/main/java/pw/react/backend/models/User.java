@@ -25,14 +25,14 @@ public class User implements UserDetails {
     private String password;
     @Column(name="email", nullable = false, unique = true)
     private String email;
-    @Column(name="first_name")
+    @Column(name="first_name", nullable = false)
     private String firstName;
-    @Column(name="last_name")
+    @Column(name="last_name", nullable = false)
     private String lastName;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name="birth_date")
+    @Column(name="birth_date", nullable = false)
     private LocalDate birthDate;
 
     @Override
@@ -44,6 +44,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
