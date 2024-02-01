@@ -1,8 +1,14 @@
-HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+logs/
+helps/
+docker/*.jar
+
+.mvn/
+mvnw
+mvnw.cmd
 !**/src/main/**/target/
 !**/src/test/**/target/
+
 
 ### STS ###
 .apt_generated
@@ -19,15 +25,8 @@ target/
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+!.elasticbeanstalk/saved_configs
