@@ -33,7 +33,7 @@ public class UserMainService implements UserService {
     }
 
     @Override
-    public boolean createUser(UserCreationDto userCreationDto) {
+    public void createUser(UserCreationDto userCreationDto) {
         User user = UserCreationMapper.mapToUser(userCreationDto);
 
         if (isValidUser(user)) {
@@ -48,7 +48,6 @@ public class UserMainService implements UserService {
             user.setPassword(passwordEncoder.encode(userCreationDto.getPassword()));
             user = userRepository.save(user);
 
-            return true;
         } else {
             log.error("User validation failed.");
             throw new UserValidationException("User validation failed.");
@@ -64,7 +63,7 @@ public class UserMainService implements UserService {
         return UserMapper.mapToUserDto(user);
     }
 
-    public boolean updateUser(Long id, UserPatchDto updatedUserDto) {
+    public void updateUser(Long id, UserPatchDto updatedUserDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User does not exist " + id));
@@ -72,9 +71,7 @@ public class UserMainService implements UserService {
         if (user != null) {
             BeanUtils.copyProperties(updatedUserDto, user, Utils.getNullPropertyNames(updatedUserDto));
             userRepository.save(user);
-            return true;
         } else {
-            return false;
         }
     }
 
