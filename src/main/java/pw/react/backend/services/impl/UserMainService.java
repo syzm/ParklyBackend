@@ -1,40 +1,39 @@
 package pw.react.backend.services.impl;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pw.react.backend.dto.UserCreationDto;
-import pw.react.backend.dto.UserDto;
-import pw.react.backend.dto.UserPatchDto;
-import pw.react.backend.exceptions.ResourceNotFoundException;
+import pw.react.backend.dto.CustomerCreationDto;
 import pw.react.backend.exceptions.UserValidationException;
-import pw.react.backend.mapper.UserCreationMapper;
-import pw.react.backend.mapper.UserMapper;
+import pw.react.backend.models.Customer;
 import pw.react.backend.models.User;
+import pw.react.backend.models.UserRole;
+import pw.react.backend.repository.CustomerRepository;
 import pw.react.backend.repository.UserRepository;
 import pw.react.backend.services.UserService;
-import pw.react.backend.utils.Utils;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserMainService implements UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserMainService.class);
 
     protected final UserRepository userRepository;
+
+    protected final CustomerRepository customerRepository;
     protected final PasswordEncoder passwordEncoder;
 
-    public UserMainService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
-    public void createUser(UserCreationDto userCreationDto) {
-        User user = UserCreationMapper.mapToUser(userCreationDto);
+    public void createCustomer(CustomerCreationDto customerCreationDto) {
+        User user = new User();
+        user.setEmail(customerCreationDto.getEmail());
+        user.setPassword(customerCreationDto.getPassword());
+        user.setRole(UserRole.Customer);
 
         if (isValidUser(user)) {
             log.info("User is valid");
@@ -45,35 +44,42 @@ public class UserMainService implements UserService {
                 throw new UserValidationException("User with the same email already exists.");
             }
 
-            user.setPassword(passwordEncoder.encode(userCreationDto.getPassword()));
+            user.setPassword(passwordEncoder.encode(customerCreationDto.getPassword()));
             user = userRepository.save(user);
 
+            Customer customer = new Customer();
+            customer.setUser(user);
+            customer.setFirstName(customerCreationDto.getFirstName());
+            customer.setLastName(customerCreationDto.getLastName());
+            customer.setBirthDate(customerCreationDto.getBirthDate());
+
+            customerRepository.save(customer);
         } else {
             log.error("User validation failed.");
             throw new UserValidationException("User validation failed.");
         }
     }
-
-    @Override
-    public UserDto getUserById(Long id) throws ResourceNotFoundException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User does not exist " + id));
-
-        return UserMapper.mapToUserDto(user);
-    }
-
-    public void updateUser(Long id, UserPatchDto updatedUserDto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User does not exist " + id));
-
-        if (user != null) {
-            BeanUtils.copyProperties(updatedUserDto, user, Utils.getNullPropertyNames(updatedUserDto));
-            userRepository.save(user);
-        } else {
-        }
-    }
+//
+//    @Override
+//    public CustomerDto getUserById(Long id) throws ResourceNotFoundException {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException("User does not exist " + id));
+//
+//        return UserMapper.mapToCustomerDto(user);
+//    }
+//
+//    public void updateUser(Long id, CustomerPatchDto updatedUserDto) {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() ->
+//                        new ResourceNotFoundException("User does not exist " + id));
+//
+//        if (user != null) {
+//            BeanUtils.copyProperties(updatedUserDto, user, Utils.getNullPropertyNames(updatedUserDto));
+//            userRepository.save(user);
+//        } else {
+//        }
+//    }
 
 
 

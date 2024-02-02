@@ -4,14 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pw.react.backend.dto.UserDto;
-import pw.react.backend.dto.UserPatchDto;
+import pw.react.backend.dto.CustomerCreationDto;
 import pw.react.backend.exceptions.UserValidationException;
-import pw.react.backend.models.User;
 import pw.react.backend.services.UserService;
-import pw.react.backend.dto.UserCreationDto;
 
 @RestController
 @RequestMapping(path = UserController.USERS_PATH)
@@ -24,38 +20,38 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> createUser(@RequestBody UserCreationDto userCreationDto) {
+    public ResponseEntity<Void> createUser(@RequestBody CustomerCreationDto customerCreationDto) {
         try {
-            userService.createUser(userCreationDto);
+            userService.createCustomer(customerCreationDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception ex) {
             throw new UserValidationException(ex.getMessage(), USERS_PATH);
         }
     }
 
-    @GetMapping
-    public ResponseEntity<UserDto> getCurrentUserInfo(@AuthenticationPrincipal User userDetails) {
-        if (userDetails != null) {
-            Long userId = userDetails.getId();
-            UserDto userDto = userService.getUserById(userId);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    }
-    @PatchMapping
-    public ResponseEntity<String> updateUser(@AuthenticationPrincipal User userDetails,
-                                             @RequestBody UserPatchDto updatedUser) {
-        if (userDetails != null) {
-            Long userId = userDetails.getId();
-            try {
-                userService.updateUser(userId, updatedUser);
-                return ResponseEntity.ok("User updated successfully");
-            } catch (Exception ex) {
-                throw new UserValidationException(ex.getMessage(), USERS_PATH);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-    }
+//    @GetMapping
+//    public ResponseEntity<CustomerDto> getCurrentUserInfo(@AuthenticationPrincipal User userDetails) {
+//        if (userDetails != null) {
+//            Long userId = userDetails.getId();
+//            CustomerDto customerDto = userService.getUserById(userId);
+//            return new ResponseEntity<>(customerDto, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//    }
+//    @PatchMapping
+//    public ResponseEntity<String> updateUser(@AuthenticationPrincipal User userDetails,
+//                                             @RequestBody CustomerPatchDto updatedUser) {
+//        if (userDetails != null) {
+//            Long userId = userDetails.getId();
+//            try {
+//                userService.updateUser(userId, updatedUser);
+//                return ResponseEntity.ok("User updated successfully");
+//            } catch (Exception ex) {
+//                throw new UserValidationException(ex.getMessage(), USERS_PATH);
+//            }
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//    }
 }
