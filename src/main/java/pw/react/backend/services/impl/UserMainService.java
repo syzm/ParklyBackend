@@ -6,9 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pw.react.backend.dto.CustomerCreationDto;
-import pw.react.backend.dto.CustomerInfoDto;
-import pw.react.backend.dto.CustomerPatchDto;
+import pw.react.backend.dto.User.AdminCreationDto;
+import pw.react.backend.dto.User.CustomerCreationDto;
+import pw.react.backend.dto.User.CustomerInfoDto;
+import pw.react.backend.dto.User.CustomerPatchDto;
 import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.Customer;
@@ -35,6 +36,8 @@ public class UserMainService implements UserService {
 
     @Override
     public void createCustomer(CustomerCreationDto customerCreationDto) {
+        CheckDuplicateEmail(customerCreationDto.getEmail());
+
         User user = new User();
         user.setEmail(customerCreationDto.getEmail());
         user.setPassword(customerCreationDto.getPassword());
@@ -42,12 +45,6 @@ public class UserMainService implements UserService {
 
         if (isValidUser(user)) {
             log.info("User is valid");
-            Optional<User> dbUser = userRepository.findByEmail(user.getEmail());
-
-            if (dbUser.isPresent()) {
-                log.error("User with the same email already exists.");
-                throw new UserValidationException("User with the same email already exists.");
-            }
 
             user.setPassword(passwordEncoder.encode(customerCreationDto.getPassword()));
             user = userRepository.save(user);
@@ -62,6 +59,33 @@ public class UserMainService implements UserService {
         } else {
             log.error("User validation failed.");
             throw new UserValidationException("User validation failed.");
+        }
+    }
+
+    @Override
+    public void createAdmin(AdminCreationDto adminCreationDto) {
+        CheckDuplicateEmail(adminCreationDto.getEmail());
+        User user = new User();
+        user.setEmail(adminCreationDto.getEmail());
+        user.setPassword(adminCreationDto.getPassword());
+        user.setRole(UserRole.Admin);
+
+        if (isValidUser(user)) {
+            log.info("User is valid");
+
+            user.setPassword(passwordEncoder.encode(adminCreationDto.getPassword()));
+            userRepository.save(user);
+        } else {
+            log.error("User validation failed.");
+            throw new UserValidationException("User validation failed.");
+        }
+    }
+
+    private void CheckDuplicateEmail(String adminCreationDto) {
+        Optional<User> dbUser = userRepository.findByEmail(adminCreationDto);
+        if (dbUser.isPresent()) {
+            log.error("User with the same email already exists.");
+            throw new UserValidationException("User with the same email already exists.");
         }
     }
 

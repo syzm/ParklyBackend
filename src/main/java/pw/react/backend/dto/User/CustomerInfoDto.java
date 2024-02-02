@@ -1,4 +1,4 @@
-package pw.react.backend.dto;
+package pw.react.backend.dto.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,8 +13,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerCreationDto {
-
+public class CustomerInfoDto {
     @NotBlank
     private String firstName;
 
@@ -28,7 +27,4 @@ public class CustomerCreationDto {
     @NotBlank
     @Email
     private String email;
-
-    @NotBlank
-    private String password;
 }

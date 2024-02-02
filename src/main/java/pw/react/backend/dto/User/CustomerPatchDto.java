@@ -1,4 +1,4 @@
-package pw.react.backend.dto;
+package pw.react.backend.dto.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
