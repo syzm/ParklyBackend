@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -17,7 +14,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class User implements UserDetails {
+public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,15 +22,6 @@ public class User implements UserDetails {
     private String password;
     @Column(name="email", nullable = false, unique = true)
     private String email;
-    @Column(name="first_name", nullable = false)
-    private String firstName;
-    @Column(name="last_name", nullable = false)
-    private String lastName;
-
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    @Column(name="birth_date", nullable = false)
-    private LocalDate birthDate;
 
     @Override
     public String getPassword() {
@@ -47,7 +35,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(() -> "ROLE_USER");
+        return Collections.singleton(() -> "ROLE_ADMIN");
     }
 
     @Override
