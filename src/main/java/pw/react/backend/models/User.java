@@ -31,7 +31,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name="birth_date", nullable = false)
     private LocalDate birthDate;
 

@@ -6,10 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import pw.react.backend.dto.UserDto;
+import pw.react.backend.dto.UserPatchDto;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.User;
 import pw.react.backend.services.UserService;
-import pw.react.backend.dto.UserDto;
+import pw.react.backend.dto.UserCreationDto;
 
 @RestController
 @RequestMapping(path = UserController.USERS_PATH)
@@ -22,9 +24,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Void> createUser(@RequestBody UserCreationDto userCreationDto) {
         try {
-            userService.createUser(userDto);
+            userService.createUser(userCreationDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception ex) {
             throw new UserValidationException(ex.getMessage(), USERS_PATH);
@@ -36,24 +38,14 @@ public class UserController {
         if (userDetails != null) {
             Long userId = userDetails.getId();
             UserDto userDto = userService.getUserById(userId);
-
-            UserDto responseUserDto = new UserDto(
-                    userDto.getId(),
-                    userDto.getFirstName(),
-                    userDto.getLastName(),
-                    userDto.getEmail(),
-                    null,
-                    userDto.getBirthDate()
-            );
-            return new ResponseEntity<>(responseUserDto, HttpStatus.OK);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
-
     @PatchMapping
     public ResponseEntity<String> updateUser(@AuthenticationPrincipal User userDetails,
-                                             @RequestBody UserDto updatedUser) {
+                                             @RequestBody UserPatchDto updatedUser) {
         if (userDetails != null) {
             Long userId = userDetails.getId();
             try {

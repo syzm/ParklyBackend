@@ -12,11 +12,11 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
-    private Long id;
+public class UserCreationDto {
     private String firstName;
     private String lastName;
     private String email;
+    private String password;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 }
