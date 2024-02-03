@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface SpotRepository extends JpaRepository<Spot, Long> {
     Page<Spot> findByCarParkId(Long carParkId, Pageable pageable);
+
+    List<Spot> findByCarParkId(Long carParkId);
 }

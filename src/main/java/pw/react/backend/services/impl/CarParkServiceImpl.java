@@ -9,11 +9,9 @@ import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.dto.CarPark.CarParksDistanceDto;
+import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.mapper.CarParkMapper;
-import pw.react.backend.models.CarPark;
-import pw.react.backend.models.City;
-import pw.react.backend.models.PageResponse;
-import pw.react.backend.models.Street;
+import pw.react.backend.models.*;
 import pw.react.backend.repository.CarParkRepository;
 import pw.react.backend.repository.StreetRepository;
 import pw.react.backend.services.CarParkService;
@@ -85,6 +83,12 @@ public class CarParkServiceImpl implements CarParkService {
                 .orElseThrow(() -> new RuntimeException("Car Park not found with id: " + carParkId));
         BeanUtils.copyProperties(carParkPatchDto, existingCarPark, Utils.getNullPropertyNames(carParkPatchDto));
         carParkRepository.save(existingCarPark);
+    }
+
+    @Override
+    public CarPark getCarParkById(Long id) {
+         Optional<CarPark> optionalCarPark = carParkRepository.findById(id);
+        return optionalCarPark.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
     }
 
     @Override

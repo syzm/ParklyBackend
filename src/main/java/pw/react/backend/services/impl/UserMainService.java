@@ -116,6 +116,11 @@ public class UserMainService implements UserService {
         customerRepository.save(customer);
     }
 
+    public User getUserById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    }
+
     private boolean isValidUser(User user) {
         if (user != null) {
             if (isValid(user.getUsername())) {
