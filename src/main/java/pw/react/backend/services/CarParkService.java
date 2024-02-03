@@ -22,9 +22,9 @@ public interface CarParkService {
                                                    LocalDateTime endDateTime,
                                                    Double dailyCostMin,
                                                    Double dailyCostMax,
-                                                   double searchLatitude,
-                                                   double searchLongitude,
-                                                   double searchRadius,
+                                                   Double searchLatitude,
+                                                   Double searchLongitude,
+                                                   Double searchRadius,
                                                    Pageable pageable);
 
     void patchCarPark(Long carParkId, CarParkPatchDto carParkPatchDto);
