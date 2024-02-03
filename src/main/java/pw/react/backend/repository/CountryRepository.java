@@ -6,5 +6,5 @@ import pw.react.backend.models.Country;
 import java.util.Optional;
 
 public interface CountryRepository extends JpaRepository<Country, Long> {
-    Optional<Country> findByIso3166Name(String iso3166Name);
+    Optional<Country> findByIso3166Name(String countryIso3166Name);
 }

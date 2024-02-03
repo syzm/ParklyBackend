@@ -2,12 +2,14 @@ package pw.react.backend.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "cities")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
