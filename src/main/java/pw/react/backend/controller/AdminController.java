@@ -11,9 +11,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
+import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.dto.User.AdminCreationDto;
 import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.exceptions.UserValidationException;
+import pw.react.backend.models.CarPark;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.UserService;
@@ -73,4 +75,13 @@ public class AdminController {
         return new ResponseEntity<>(pageResponse, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{carParkId}")
+    public ResponseEntity<CarPark> patchCarPark(
+            @PathVariable Long carParkId,
+            @RequestBody CarParkPatchDto carParkPatchDto
+    ) {
+        carParkService.patchCarPark(carParkId, carParkPatchDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

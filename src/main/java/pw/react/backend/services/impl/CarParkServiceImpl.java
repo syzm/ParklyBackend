@@ -1,11 +1,13 @@
 package pw.react.backend.services.impl;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
+import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.mapper.CarParkMapper;
 import pw.react.backend.models.CarPark;
 import pw.react.backend.models.City;
@@ -15,6 +17,7 @@ import pw.react.backend.repository.CarParkRepository;
 import pw.react.backend.repository.StreetRepository;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.StreetService;
+import pw.react.backend.utils.Utils;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,5 +72,13 @@ public class CarParkServiceImpl implements CarParkService {
         int totalPages = filteredCarParks.getTotalPages();
 
         return new PageResponse<>(carParks, totalElements, totalPages);
+    }
+
+    @Override
+    public void patchCarPark(Long carParkId, CarParkPatchDto carParkPatchDto) {
+        CarPark existingCarPark = carParkRepository.findById(carParkId)
+                .orElseThrow(() -> new RuntimeException("Car Park not found with id: " + carParkId));
+        BeanUtils.copyProperties(carParkPatchDto, existingCarPark, Utils.getNullPropertyNames(carParkPatchDto));
+        carParkRepository.save(existingCarPark);
     }
 }
