@@ -40,14 +40,15 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
             "    (:startDateTime <= r.startDate AND :endDateTime >= r.endDate)) " +
             ")) " +
             "AND (:dailyCostMin IS NULL OR cp.dailyCost >= :dailyCostMin) " +
-            "AND (:dailyCostMax IS NULL OR cp.dailyCost <= :dailyCostMax)")
-    Page<CarPark> findCarParksForUser(@Param("countryName") String countryName,
-                                      @Param("cityName") String cityName,
-                                      @Param("startDateTime") LocalDateTime startDateTime,
-                                      @Param("endDateTime") LocalDateTime endDateTime,
-                                      @Param("dailyCostMin") Double dailyCostMin,
-                                      @Param("dailyCostMax") Double dailyCostMax,
-                                      Pageable pageable);
-
+            "AND (:dailyCostMax IS NULL OR cp.dailyCost <= :dailyCostMax) " +
+            "AND EXISTS (SELECT 1 FROM Spot s WHERE s.carPark = cp)")
+    Page<CarPark> findCarParksForUser(
+            @Param("countryName") String countryName,
+            @Param("cityName") String cityName,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("dailyCostMin") Double dailyCostMin,
+            @Param("dailyCostMax") Double dailyCostMax,
+            Pageable pageable);
 
 }

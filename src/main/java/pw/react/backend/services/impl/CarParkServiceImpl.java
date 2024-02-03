@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
+import pw.react.backend.dto.CarPark.CarParksDistanceDto;
 import pw.react.backend.mapper.CarParkMapper;
 import pw.react.backend.models.CarPark;
 import pw.react.backend.models.City;
@@ -21,6 +22,7 @@ import pw.react.backend.utils.HaversineDistanceCalculator;
 import pw.react.backend.utils.Utils;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -86,37 +88,48 @@ public class CarParkServiceImpl implements CarParkService {
     }
 
     @Override
-    public PageResponse<CarParkInfoDto> findCarParksForUser(String countryName,
-                                                            String cityName,
-                                                            LocalDateTime startDateTime,
-                                                            LocalDateTime endDateTime,
-                                                            Double dailyCostMin,
-                                                            Double dailyCostMax,
-                                                            Double searchLatitude,
-                                                            Double searchLongitude,
-                                                            Double searchRadius,
-                                                            Pageable pageable) {
+    public PageResponse<CarParksDistanceDto> findCarParksForUser(String countryName,
+                                                                 String cityName,
+                                                                 LocalDateTime startDateTime,
+                                                                 LocalDateTime endDateTime,
+                                                                 Double dailyCostMin,
+                                                                 Double dailyCostMax,
+                                                                 Double searchLatitude,
+                                                                 Double searchLongitude,
+                                                                 Double searchRadius,
+                                                                 Pageable pageable) {
 
         Page<CarPark> filteredCarParks = carParkRepository.findCarParksForUser(
                 countryName, cityName, startDateTime, endDateTime, dailyCostMin, dailyCostMax,
                 pageable);
 
-        List<CarParkInfoDto> carParks = filteredCarParks.stream()
-                .filter(cp -> cpMatchesSearchRadius(cp, searchLatitude, searchLongitude, searchRadius))
-                .map(CarParkMapper::mapToDto)
+        List<CarParksDistanceDto> carParks = filteredCarParks.getContent().stream()
+                .map(cp -> {
+                    double distance = HaversineDistanceCalculator.calculateDistance(
+                            cp.getLatitude(), cp.getLongitude(), searchLatitude, searchLongitude);
+                    Street street = cp.getStreet();
+                    City city = street.getCity();
+
+                    return new CarParksDistanceDto(
+                            cp.getId(),
+                            city.getCountry().getIso3166Name(),
+                            city.getName(),
+                            cp.getPostalCode(),
+                            street.getName(),
+                            cp.getBuildingNumber(),
+                            cp.getLongitude(),
+                            cp.getLatitude(),
+                            cp.getDailyCost(),
+                            distance
+                    );
+                })
+                .filter(dto -> dto.getDistanceKm() <= searchRadius)
+                .sorted(Comparator.comparingDouble(CarParksDistanceDto::getDistanceKm)) // Sort by distance
                 .collect(Collectors.toList());
 
-        long totalElements = filteredCarParks.getTotalElements();
+        long totalElements = carParks.size();
         int totalPages = filteredCarParks.getTotalPages();
 
         return new PageResponse<>(carParks, totalElements, totalPages);
     }
-
-    private boolean cpMatchesSearchRadius(CarPark carPark, Double searchLatitude, Double searchLongitude, Double searchRadius) {
-        double distance = HaversineDistanceCalculator.calculateDistance(
-                carPark.getLatitude(), carPark.getLongitude(), searchLatitude, searchLongitude);
-
-        return distance <= searchRadius;
-    }
-
 }

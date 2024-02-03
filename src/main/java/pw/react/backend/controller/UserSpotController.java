@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
+import pw.react.backend.dto.CarPark.CarParksDistanceDto;
 import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
@@ -31,7 +32,7 @@ public class UserSpotController {
 
 
     @GetMapping
-    public ResponseEntity<PageResponse<CarParkInfoDto>> getFilteredCarParks(
+    public ResponseEntity<PageResponse<CarParksDistanceDto>> getFilteredCarParks(
             @RequestParam(name = "countryName", required = true) String countryName,
             @RequestParam(name = "cityName", required = true) String cityName,
             @RequestParam(name = "startDateTime", required = true) LocalDateTime startDateTime,
@@ -45,7 +46,7 @@ public class UserSpotController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        PageResponse<CarParkInfoDto> pageResponse = carParkService.findCarParksForUser(
+        PageResponse<CarParksDistanceDto> pageResponse = carParkService.findCarParksForUser(
                 countryName, cityName, startDateTime, endDateTime, dailyCostMin, dailyCostMax,
                 searchLatitude, searchLongitude, searchRadius, pageable);
         return new ResponseEntity<>(pageResponse, HttpStatus.OK);
