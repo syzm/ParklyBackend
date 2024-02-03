@@ -19,6 +19,7 @@ import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.StreetService;
 import pw.react.backend.utils.Utils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,5 +81,28 @@ public class CarParkServiceImpl implements CarParkService {
                 .orElseThrow(() -> new RuntimeException("Car Park not found with id: " + carParkId));
         BeanUtils.copyProperties(carParkPatchDto, existingCarPark, Utils.getNullPropertyNames(carParkPatchDto));
         carParkRepository.save(existingCarPark);
+    }
+
+    @Override
+    public PageResponse<CarParkInfoDto> findCarParksForUser(String countryName,
+                                                     String cityName,
+                                                     LocalDateTime startDateTime,
+                                                     LocalDateTime endDateTime,
+                                                     Double dailyCostMin,
+                                                     Double dailyCostMax,
+                                                     double searchLatitude,
+                                                     double searchLongitude,
+                                                     double searchRadius,
+                                                     Pageable pageable) {
+
+        Page<CarPark> filteredCarParks = carParkRepository.findCarParksForUser(
+                countryName, cityName, startDateTime, endDateTime, dailyCostMin, dailyCostMax,
+                searchLatitude, searchLongitude, searchRadius, pageable);
+
+        List<CarParkInfoDto> carParks = filteredCarParks.map(CarParkMapper::mapToDto).getContent();
+        long totalElements = filteredCarParks.getTotalElements();
+        int totalPages = filteredCarParks.getTotalPages();
+
+        return new PageResponse<>(carParks, totalElements, totalPages);
     }
 }
