@@ -34,4 +34,7 @@ public class CarParkCreationDto {
     @NotNull
     @DecimalMin("0.0")
     private double dailyCost;
+
+    @NotNull
+    private boolean isActive;
 }

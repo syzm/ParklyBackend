@@ -33,4 +33,7 @@ public class CarPark {
 
     @Column(name = "daily_cost", nullable = false)
     private double dailyCost;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
 }

@@ -44,6 +44,7 @@ public class CarParkServiceImpl implements CarParkService {
         newCarPark.setLongitude(carParkCreationDto.getLongitude());
         newCarPark.setLatitude(carParkCreationDto.getLatitude());
         newCarPark.setPostalCode(carParkCreationDto.getPostalCode());
+        newCarPark.setActive(carParkCreationDto.isActive());
         newCarPark.setDailyCost(carParkCreationDto.getDailyCost());
 
         carParkRepository.save(newCarPark);
