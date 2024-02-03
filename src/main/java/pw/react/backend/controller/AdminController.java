@@ -3,17 +3,18 @@ package pw.react.backend.controller;
 import jakarta.persistence.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
+import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.User.AdminCreationDto;
 import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.exceptions.UserValidationException;
+import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.UserService;
 
@@ -40,7 +41,7 @@ public class AdminController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/car_park/add")
+    @PostMapping("/carparks")
     public ResponseEntity<Void> createParking(@RequestBody CarParkCreationDto carParkCreationDto) {
         try {
             carParkService.CreateCarPark(carParkCreationDto);
@@ -52,6 +53,24 @@ public class AdminController {
             log.error("Error creating car park: {}", ex.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/carparks")
+    public ResponseEntity<PageResponse<CarParkInfoDto>> getFilteredCarParks(
+            @RequestParam(name = "dailyCostMin", required = false) Double dailyCostMin,
+            @RequestParam(name = "dailyCostMax", required = false) Double dailyCostMax,
+            @RequestParam(name = "iso3166Name", required = false) String iso3166Name,
+            @RequestParam(name = "cityName", required = false) String cityName,
+            @RequestParam(name = "streetName", required = false) String streetName,
+            @RequestParam(name = "isActive", required = false) Boolean isActive,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        PageResponse<CarParkInfoDto> pageResponse = carParkService.getFilteredCarParks(
+                dailyCostMin, dailyCostMax, iso3166Name, cityName, streetName, isActive, pageable);
+        return new ResponseEntity<>(pageResponse, HttpStatus.OK);
     }
 
 }

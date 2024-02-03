@@ -1,16 +1,22 @@
 package pw.react.backend.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
+import pw.react.backend.dto.CarPark.CarParkInfoDto;
+import pw.react.backend.mapper.CarParkMapper;
 import pw.react.backend.models.CarPark;
 import pw.react.backend.models.City;
+import pw.react.backend.models.PageResponse;
 import pw.react.backend.models.Street;
 import pw.react.backend.repository.CarParkRepository;
 import pw.react.backend.repository.StreetRepository;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.StreetService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,5 +54,20 @@ public class CarParkServiceImpl implements CarParkService {
         newCarPark.setDailyCost(carParkCreationDto.getDailyCost());
 
         carParkRepository.save(newCarPark);
+    }
+
+    @Override
+    public PageResponse<CarParkInfoDto> getFilteredCarParks(Double dailyCostMin, Double dailyCostMax,
+                                                            String iso3166Name, String cityName,
+                                                            String streetName, Boolean isActive,
+                                                            Pageable pageable) {
+        Page<CarPark> filteredCarParks = carParkRepository.findByFilters(
+                dailyCostMin, dailyCostMax, iso3166Name, cityName, streetName, isActive, pageable);
+
+        List<CarParkInfoDto> carParks = filteredCarParks.map(CarParkMapper::mapToDto).getContent();
+        long totalElements = filteredCarParks.getTotalElements();
+        int totalPages = filteredCarParks.getTotalPages();
+
+        return new PageResponse<>(carParks, totalElements, totalPages);
     }
 }
