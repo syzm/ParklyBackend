@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.Spot.SpotCreationDto;
+import pw.react.backend.dto.Spot.SpotInfoDto;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.models.Spot;
@@ -40,14 +41,13 @@ public class AdminSpotsController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/{carParkId}")
-    public ResponseEntity<PageResponse<Spot>> getSpotsByCarParkId(
+    public ResponseEntity<PageResponse<SpotInfoDto>> getSpotsByCarParkId(
             @PathVariable Long carParkId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        PageResponse<Spot> spotsPageResponse = spotService.getSpotsByCarParkId(carParkId, pageable);
+        PageResponse<SpotInfoDto> spotsPageResponse = spotService.getSpotsByCarParkId(carParkId, pageable);
         return new ResponseEntity<>(spotsPageResponse, HttpStatus.OK);
     }
-
 }
