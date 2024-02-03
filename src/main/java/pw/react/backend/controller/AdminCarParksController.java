@@ -30,7 +30,7 @@ public class AdminCarParksController {
     @PostMapping
     public ResponseEntity<Void> createParking(@RequestBody CarParkCreationDto carParkCreationDto) {
         try {
-            carParkService.CreateCarPark(carParkCreationDto);
+            carParkService.createCarPark(carParkCreationDto);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (CarParkValidationException ex) {
             log.error("Car park validation failed: {}", ex.getMessage());

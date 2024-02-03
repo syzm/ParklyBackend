@@ -33,7 +33,7 @@ public class CarParkServiceImpl implements CarParkService {
     }
 
     @Override
-    public void CreateCarPark(CarParkCreationDto carParkCreationDto) {
+    public void createCarPark(CarParkCreationDto carParkCreationDto) {
         // Find or create Street and rest of address
         Street existingStreet = streetService.getOrCreateStreet(carParkCreationDto.getStreetName(),
                 carParkCreationDto.getCityName(), carParkCreationDto.getIso3166Country());
