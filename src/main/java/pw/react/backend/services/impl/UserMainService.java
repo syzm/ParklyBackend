@@ -125,6 +125,8 @@ public class UserMainService implements UserService {
     public User getUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    }
+
     @Override
     public PageResponse<CustomerInfoDto> findCustomersByParameters(String firstName,
                                                             String lastName,
