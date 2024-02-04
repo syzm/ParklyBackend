@@ -27,6 +27,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Page<Reservation> findBySpot_CarPark_Id(Long carParkId, Pageable pageable);
 
+    List<Reservation> findBySpot_CarPark_IdAndStatus(Long carParkId, ReservationStatus status);
+
     List<Reservation> findByEndDateBeforeAndStatus(LocalDateTime endDate, ReservationStatus status);
 
     @Query("SELECT r FROM Reservation r " +

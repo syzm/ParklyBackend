@@ -156,6 +156,18 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.saveAll(activeReservations);
     }
 
+    @Override
+    public void deactivateReservations(Long carParkId) {
+        List<Reservation> activeReservations = reservationRepository
+                .findBySpot_CarPark_IdAndStatus(carParkId, ReservationStatus.ACTIVE);
+
+        for (Reservation reservation : activeReservations) {
+            reservation.setStatus(ReservationStatus.CANCELED_BY_ADMIN);
+        }
+
+        reservationRepository.saveAll(activeReservations);
+    }
+
 
     private PageResponse<ReservationInfoDto> createReservationPageResponse(Page<Reservation> reservationsPage) {
         return new PageResponse<>(

@@ -23,6 +23,8 @@ public interface ReservationService {
 
     void refreshReservations();
 
+    void deactivateReservations(Long carParkId);
+
     PageResponse<ReservationInfoDto> getByParameters(Long userId,
                                                       Long spotId,
                                                       LocalDateTime startDate,
