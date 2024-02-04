@@ -95,6 +95,18 @@ public class ReservationServiceImpl implements ReservationService {
         return createReservationPageResponse(carParkReservations);
     }
 
+    @Override
+    public void userReservationCancel(Long reservationId, Long userId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + reservationId));
+
+        if (!reservation.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You are not authorized to cancel this reservation.");
+        }
+        reservation.setStatus(ReservationStatus.CANCELED_BY_USER);
+        reservationRepository.save(reservation);
+    }
+
 
     private PageResponse<ReservationInfoDto> createReservationPageResponse(Page<Reservation> reservationsPage) {
         return new PageResponse<>(

@@ -13,4 +13,6 @@ public interface ReservationService {
 
     PageResponse<ReservationInfoDto> getCarParkReservations(Long carParkId, Pageable pageable);
 
+    void userReservationCancel(Long reservationId, Long userId);
+
 }

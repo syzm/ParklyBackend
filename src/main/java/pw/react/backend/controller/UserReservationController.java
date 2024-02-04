@@ -16,6 +16,7 @@ import pw.react.backend.dto.Reservation.ReservationCreationDto;
 import pw.react.backend.dto.Reservation.ReservationInfoDto;
 import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.exceptions.ResourceNotFoundException;
+import pw.react.backend.exceptions.UnauthorizedException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.models.User;
 import pw.react.backend.services.CarParkService;
@@ -63,4 +64,20 @@ public class UserReservationController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+    @PostMapping("/{reservationId}/cancel")
+    public ResponseEntity<String> cancelReservation(@PathVariable Long reservationId,
+                                                    @AuthenticationPrincipal User userDetails) {
+        try {
+            Long userId = userDetails.getId();
+            reservationService.userReservationCancel(reservationId, userId);
+            return ResponseEntity.status(HttpStatus.OK).body("Reservation canceled successfully");
+        } catch (UnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to cancel this reservation.");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reservation not found with ID: " + reservationId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error cancelling reservation");
+        }
+    }
 }
