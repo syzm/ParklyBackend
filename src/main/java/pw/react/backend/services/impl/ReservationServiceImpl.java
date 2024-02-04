@@ -1,11 +1,13 @@
 package pw.react.backend.services.impl;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dto.Reservation.ReservationCreationDto;
 import pw.react.backend.dto.Reservation.ReservationInfoDto;
+import pw.react.backend.dto.Reservation.ReservationPatchDto;
 import pw.react.backend.enums.ReservationStatus;
 import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.models.*;
@@ -17,6 +19,8 @@ import pw.react.backend.services.UserService;
 
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
+
+import static pw.react.backend.utils.Utils.getNullPropertyNames;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -105,6 +109,32 @@ public class ReservationServiceImpl implements ReservationService {
         }
         reservation.setStatus(ReservationStatus.CANCELED_BY_USER);
         reservationRepository.save(reservation);
+    }
+
+    @Override
+    public void patchReservation(Long reservationId, ReservationPatchDto reservationPatchDto) {
+        Reservation existingReservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with id: " + reservationId));
+
+        String newStatus = reservationPatchDto.getStatus();
+        if (newStatus != null) {
+            try {
+                ReservationStatus status = ReservationStatus.valueOf(newStatus);
+                existingReservation.setStatus(status);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid reservation status: " + reservationPatchDto.getStatus());
+            }
+        }
+
+        Double newCost = reservationPatchDto.getCost();
+        if (newCost != null) {
+            if (newCost < 0.0) {
+                throw new IllegalArgumentException("Cost cannot be negative");
+            }
+            existingReservation.setCost(newCost);
+        }
+
+        reservationRepository.save(existingReservation);
     }
 
 

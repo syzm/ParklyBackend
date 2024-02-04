@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class UserSpotController {
 
     private static final Logger log = LoggerFactory.getLogger(UserSpotController.class);
-    static final String PATH = "/user/spot";
+    static final String PATH = "/user/car_park";
     private final CarParkService carParkService;
 
     public UserSpotController(CarParkService carParkService) {

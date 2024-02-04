@@ -1,5 +1,6 @@
 package pw.react.backend.controller;
 
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -11,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.Reservation.ReservationInfoDto;
+import pw.react.backend.dto.Reservation.ReservationPatchDto;
 import pw.react.backend.dto.User.AdminCreationDto;
 import pw.react.backend.dto.User.CustomerInfoDto;
+import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.ReservationService;
@@ -61,5 +64,18 @@ public class AdminReservationController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{reservationId}")
+    public ResponseEntity<String> patchReservation(@PathVariable Long reservationId,
+                                                   @RequestBody @Valid ReservationPatchDto reservationPatchDto) {
+        try {
+            reservationService.patchReservation(reservationId, reservationPatchDto);
+            return ResponseEntity.status(HttpStatus.OK).body("Reservation patched successfully");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reservation not found with ID: " + reservationId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error patching reservation");
+        }
+    }
 
 }
