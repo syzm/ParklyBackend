@@ -31,17 +31,18 @@ public class UserSpotController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @GetMapping
     public ResponseEntity<PageResponse<CarParksDistanceDto>> getFilteredCarParks(
-            @RequestParam(name = "countryName", required = true) String countryName,
-            @RequestParam(name = "cityName", required = true) String cityName,
-            @RequestParam(name = "startDateTime", required = true) LocalDateTime startDateTime,
-            @RequestParam(name = "endDateTime", required = true) LocalDateTime endDateTime,
+            @RequestParam(name = "countryName") String countryName,
+            @RequestParam(name = "cityName") String cityName,
+            @RequestParam(name = "startDateTime") LocalDateTime startDateTime,
+            @RequestParam(name = "endDateTime") LocalDateTime endDateTime,
             @RequestParam(name = "dailyCostMin", required = false) Double dailyCostMin,
             @RequestParam(name = "dailyCostMax", required = false) Double dailyCostMax,
-            @RequestParam(name = "searchLatitude", required = true) double searchLatitude,
-            @RequestParam(name = "searchLongitude", required = true) double searchLongitude,
-            @RequestParam(name = "searchRadius", required = true) double searchRadius,
+            @RequestParam(name = "searchLatitude") double searchLatitude,
+            @RequestParam(name = "searchLongitude") double searchLongitude,
+            @RequestParam(name = "searchRadius") double searchRadius,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {

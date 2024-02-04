@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.*;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -20,6 +21,7 @@ import static java.util.stream.Collectors.toSet;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @Import({
         NonBatchConfig.class, JwtConfig.class, OpenApiConfig.class
 })

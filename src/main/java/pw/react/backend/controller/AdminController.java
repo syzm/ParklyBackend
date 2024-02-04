@@ -14,6 +14,7 @@ import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.dto.Spot.SpotCreationDto;
 import pw.react.backend.dto.User.AdminCreationDto;
+import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.CarPark;
@@ -42,4 +43,21 @@ public class AdminController {
             throw new UserValidationException(ex.getMessage(), ADMIN_PATH);
         }
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/users")
+    public ResponseEntity<PageResponse<CustomerInfoDto>> findCustomersByParameters(
+            @RequestParam(name = "firstName", required = false) String firstName,
+            @RequestParam(name = "lastName", required = false) String lastName,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        PageResponse<CustomerInfoDto> customersPageResponse = userService.findCustomersByParameters(
+                firstName, lastName, email, pageable
+        );
+        return new ResponseEntity<>(customersPageResponse, HttpStatus.OK);
+    }
+
 }

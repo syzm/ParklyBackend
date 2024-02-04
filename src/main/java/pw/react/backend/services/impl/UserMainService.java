@@ -47,7 +47,7 @@ public class UserMainService implements UserService {
         User user = new User();
         user.setEmail(customerCreationDto.getEmail());
         user.setPassword(customerCreationDto.getPassword());
-        user.setRole(UserRole.ADMIN);
+        user.setRole("CUSTOMER");
 
         if (isValidUser(user)) {
             log.info("User is valid");
@@ -74,7 +74,7 @@ public class UserMainService implements UserService {
         User user = new User();
         user.setEmail(adminCreationDto.getEmail());
         user.setPassword(adminCreationDto.getPassword());
-        user.setRole(UserRole.CUSTOMER);
+        user.setRole("ADMIN");
 
         if (isValidUser(user)) {
             log.info("User is valid");
