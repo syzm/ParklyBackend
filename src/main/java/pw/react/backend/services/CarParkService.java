@@ -4,7 +4,13 @@ import org.springframework.data.domain.Pageable;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
+import pw.react.backend.dto.CarPark.CarParksDistanceDto;
+import pw.react.backend.models.CarPark;
 import pw.react.backend.models.PageResponse;
+import pw.react.backend.models.Spot;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface CarParkService {
     void createCarPark(CarParkCreationDto carParkCreationDto);
@@ -14,5 +20,18 @@ public interface CarParkService {
                                      String streetName, Boolean isActive,
                                      Pageable pageable);
 
+    PageResponse<CarParksDistanceDto> findCarParksForUser(String countryName,
+                                                          String cityName,
+                                                          LocalDateTime startDateTime,
+                                                          LocalDateTime endDateTime,
+                                                          Double dailyCostMin,
+                                                          Double dailyCostMax,
+                                                          Double searchLatitude,
+                                                          Double searchLongitude,
+                                                          Double searchRadius,
+                                                          Pageable pageable);
+
     void patchCarPark(Long carParkId, CarParkPatchDto carParkPatchDto);
+
+    CarPark getCarParkById(Long id);
 }

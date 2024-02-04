@@ -8,19 +8,22 @@ import org.springframework.stereotype.Service;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
+import pw.react.backend.dto.CarPark.CarParksDistanceDto;
+import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.mapper.CarParkMapper;
-import pw.react.backend.models.CarPark;
-import pw.react.backend.models.City;
-import pw.react.backend.models.PageResponse;
-import pw.react.backend.models.Street;
+import pw.react.backend.models.*;
 import pw.react.backend.repository.CarParkRepository;
 import pw.react.backend.repository.StreetRepository;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.StreetService;
+import pw.react.backend.utils.HaversineDistanceCalculator;
 import pw.react.backend.utils.Utils;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarParkServiceImpl implements CarParkService {
@@ -80,5 +83,57 @@ public class CarParkServiceImpl implements CarParkService {
                 .orElseThrow(() -> new RuntimeException("Car Park not found with id: " + carParkId));
         BeanUtils.copyProperties(carParkPatchDto, existingCarPark, Utils.getNullPropertyNames(carParkPatchDto));
         carParkRepository.save(existingCarPark);
+    }
+
+    @Override
+    public CarPark getCarParkById(Long id) {
+         Optional<CarPark> optionalCarPark = carParkRepository.findById(id);
+        return optionalCarPark.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    }
+
+    @Override
+    public PageResponse<CarParksDistanceDto> findCarParksForUser(String countryName,
+                                                                 String cityName,
+                                                                 LocalDateTime startDateTime,
+                                                                 LocalDateTime endDateTime,
+                                                                 Double dailyCostMin,
+                                                                 Double dailyCostMax,
+                                                                 Double searchLatitude,
+                                                                 Double searchLongitude,
+                                                                 Double searchRadius,
+                                                                 Pageable pageable) {
+
+        Page<CarPark> filteredCarParks = carParkRepository.findCarParksForUser(
+                countryName, cityName, startDateTime, endDateTime, dailyCostMin, dailyCostMax,
+                pageable);
+
+        List<CarParksDistanceDto> carParks = filteredCarParks.getContent().stream()
+                .map(cp -> {
+                    double distance = HaversineDistanceCalculator.calculateDistance(
+                            cp.getLatitude(), cp.getLongitude(), searchLatitude, searchLongitude);
+                    Street street = cp.getStreet();
+                    City city = street.getCity();
+
+                    return new CarParksDistanceDto(
+                            cp.getId(),
+                            city.getCountry().getIso3166Name(),
+                            city.getName(),
+                            cp.getPostalCode(),
+                            street.getName(),
+                            cp.getBuildingNumber(),
+                            cp.getLongitude(),
+                            cp.getLatitude(),
+                            cp.getDailyCost(),
+                            distance
+                    );
+                })
+                .filter(dto -> dto.getDistanceKm() <= searchRadius)
+                .sorted(Comparator.comparingDouble(CarParksDistanceDto::getDistanceKm)) // Sort by distance
+                .collect(Collectors.toList());
+
+        long totalElements = carParks.size();
+        int totalPages = filteredCarParks.getTotalPages();
+
+        return new PageResponse<>(carParks, totalElements, totalPages);
     }
 }

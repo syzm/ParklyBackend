@@ -34,7 +34,7 @@ public class Reservation {
     @Column(name = "canceled", nullable = false)
     private boolean canceled;
 
-    @Column(name = "external_user_id", nullable = false)
+    @Column(name = "external_user_id", nullable = true)
     private Long externalUserId;
 
     @Column(name = "cost_euros", nullable = false)

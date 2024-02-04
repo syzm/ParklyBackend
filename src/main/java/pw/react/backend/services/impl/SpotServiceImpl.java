@@ -9,11 +9,14 @@ import pw.react.backend.dto.Spot.SpotInfoDto;
 import pw.react.backend.mapper.SpotMapper;
 import pw.react.backend.models.CarPark;
 import pw.react.backend.models.PageResponse;
+import pw.react.backend.models.Reservation;
 import pw.react.backend.models.Spot;
 import pw.react.backend.repository.CarParkRepository;
+import pw.react.backend.repository.ReservationRepository;
 import pw.react.backend.repository.SpotRepository;
 import pw.react.backend.services.SpotService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +24,14 @@ import java.util.stream.Collectors;
 public class SpotServiceImpl implements SpotService {
     private final SpotRepository spotRepository;
     private final CarParkRepository carParkRepository;
+    private final ReservationRepository reservationRepository;
 
     @Autowired
-    public SpotServiceImpl(SpotRepository spotRepository, CarParkRepository carParkRepository){
+    public SpotServiceImpl(SpotRepository spotRepository, CarParkRepository carParkRepository,
+                           ReservationRepository reservationRepository){
         this.spotRepository = spotRepository;
         this.carParkRepository = carParkRepository;
+        this.reservationRepository = reservationRepository;
     }
 
 
@@ -57,5 +63,26 @@ public class SpotServiceImpl implements SpotService {
                 spotsPage.getTotalElements(),
                 spotsPage.getTotalPages()
         );
+    }
+
+    @Override
+    public Spot findAvailableSpot(CarPark carPark, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Spot> allSpots = spotRepository.findByCarParkId(carPark.getId());
+
+        for (Spot spot : allSpots) {
+            if (isSpotAvailable(spot, startDate, endDate)) {
+                return spot;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean isSpotAvailable(Spot spot, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Reservation> overlappingReservations = reservationRepository.findOverlappingReservations(
+                spot.getId(), startDate, endDate);
+
+        return overlappingReservations.isEmpty();
     }
 }
