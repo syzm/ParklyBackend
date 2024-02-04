@@ -16,9 +16,11 @@ import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.ReservationService;
 import pw.react.backend.services.SpotService;
 import pw.react.backend.services.UserService;
+import pw.react.backend.mapper.ReservationMapper;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -161,5 +163,31 @@ public class ReservationServiceImpl implements ReservationService {
                 reservationsPage.getTotalElements(),
                 reservationsPage.getTotalPages()
         );
+    }
+
+    @Override
+    public PageResponse<ReservationInfoDto> getByParameters(Long userId,
+                                                      Long spotId,
+                                                      LocalDateTime startDate,
+                                                      LocalDateTime endDate,
+                                                      ReservationStatus status,
+                                                      Long externalUserId,
+                                                      Double costMin,
+                                                      Double costMax,
+                                                      Pageable pageable) {
+
+        Page<Reservation> filteredReservations = reservationRepository.findByParameters(
+                userId, spotId, startDate, endDate, status,
+                externalUserId, costMin, costMax, pageable);
+
+        List<ReservationInfoDto> reservations = filteredReservations.stream()
+                .map(ReservationMapper::mapToDto)
+                .sorted(Comparator.comparingLong(ReservationInfoDto::getId))
+                .collect(Collectors.toList());
+
+        long totalElements = reservations.size();
+        int totalPages = filteredReservations.getTotalPages();
+
+        return new PageResponse<>(reservations, totalElements, totalPages);
     }
 }

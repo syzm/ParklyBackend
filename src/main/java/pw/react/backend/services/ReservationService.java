@@ -5,6 +5,9 @@ import pw.react.backend.dto.Reservation.ReservationCreationDto;
 import pw.react.backend.dto.Reservation.ReservationInfoDto;
 import pw.react.backend.dto.Reservation.ReservationPatchDto;
 import pw.react.backend.models.PageResponse;
+import pw.react.backend.enums.ReservationStatus;
+
+import java.time.LocalDateTime;
 
 public interface ReservationService {
     void makeReservation(ReservationCreationDto reservationCreationDto, Long userId);
@@ -19,5 +22,15 @@ public interface ReservationService {
     void patchReservation(Long reservationId, ReservationPatchDto reservationPatchDto);
 
     void refreshReservations();
+
+    PageResponse<ReservationInfoDto> getByParameters(Long userId,
+                                                      Long spotId,
+                                                      LocalDateTime startDate,
+                                                      LocalDateTime endDate,
+                                                      ReservationStatus status,
+                                                      Long externalUserId,
+                                                      Double costMin,
+                                                      Double costMax,
+                                                      Pageable pageable);
 
 }
