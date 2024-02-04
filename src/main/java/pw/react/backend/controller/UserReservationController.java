@@ -34,17 +34,16 @@ public class UserReservationController {
     }
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @PostMapping
-    public ResponseEntity<String> createReservation(@RequestBody @Valid ReservationCreationDto reservationDto,
+    public ResponseEntity<Double> createReservation(@RequestBody @Valid ReservationCreationDto reservationDto,
                                                     @AuthenticationPrincipal User userDetails) {
         try {
             Long userId = userDetails.getId();
-            reservationService.makeReservation(reservationDto, userId);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Reservation created successfully");
+            Double cost = reservationService.makeReservation(reservationDto, userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(cost);
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating reservation");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

@@ -46,7 +46,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public void makeReservation(ReservationCreationDto reservationCreationDto, Long userId) {
+    public Double makeReservation(ReservationCreationDto reservationCreationDto, Long userId) {
         User user = userService.getUserById(userId);
 
         if (user == null) {
@@ -67,7 +67,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         long daysBetween = ChronoUnit.DAYS.between(reservationCreationDto.getStartDate(), reservationCreationDto.getEndDate());
-        double cost = daysBetween * carPark.getDailyCost();
+        double cost = (daysBetween + 1) * carPark.getDailyCost();
 
         Reservation reservation = new Reservation();
         reservation.setUser(user);
@@ -81,6 +81,8 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setCost(cost);
 
         reservationRepository.save(reservation);
+
+        return cost;
     }
 
     @Override

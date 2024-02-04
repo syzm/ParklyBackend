@@ -10,7 +10,7 @@ import pw.react.backend.enums.ReservationStatus;
 import java.time.LocalDateTime;
 
 public interface ReservationService {
-    void makeReservation(ReservationCreationDto reservationCreationDto, Long userId);
+    Double makeReservation(ReservationCreationDto reservationCreationDto, Long userId);
     ReservationInfoDto returnReservationInfo(Long reservationId);
 
     PageResponse<ReservationInfoDto> getUserReservations(Long userId, Pageable pageable);
