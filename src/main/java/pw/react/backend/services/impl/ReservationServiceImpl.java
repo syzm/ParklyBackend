@@ -204,4 +204,9 @@ public class ReservationServiceImpl implements ReservationService {
 
         return new PageResponse<>(reservations, totalElements, totalPages);
     }
+
+    @Override
+    public long getReservationCount() {
+        return reservationRepository.count();
+    }
 }

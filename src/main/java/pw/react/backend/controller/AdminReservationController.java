@@ -98,4 +98,11 @@ public class AdminReservationController {
         );
         return new ResponseEntity<>(reservationsPageResponse, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getReservationCount() {
+        long reservationCount = reservationService.getReservationCount();
+        return new ResponseEntity<>(reservationCount, HttpStatus.OK);
+    }
 }

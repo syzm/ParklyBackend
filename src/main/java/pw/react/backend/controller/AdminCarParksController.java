@@ -76,4 +76,11 @@ public class AdminCarParksController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCarParkCount() {
+        long carParkCount = carParkService.getCarParkCount();
+        return new ResponseEntity<>(carParkCount, HttpStatus.OK);
+    }
+
 }

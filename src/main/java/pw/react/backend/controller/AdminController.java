@@ -22,6 +22,7 @@ import pw.react.backend.models.CarPark;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.models.Spot;
 import pw.react.backend.services.CarParkService;
+import pw.react.backend.services.CustomerService;
 import pw.react.backend.services.UserService;
 import pw.react.backend.services.ReservationService;
 import pw.react.backend.enums.ReservationStatus;
@@ -35,10 +36,13 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
     static final String ADMIN_PATH = "/admin";
     private final UserService userService;
+    private final CustomerService customerService;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, CustomerService customerService) {
         this.userService = userService;
+        this.customerService = customerService;
     }
+
     @PostMapping("/register")
     public ResponseEntity<Void> createAdmin(@RequestBody AdminCreationDto adminCreationDto) {
         try {
@@ -63,5 +67,12 @@ public class AdminController {
                 firstName, lastName, email, pageable
         );
         return new ResponseEntity<>(customersPageResponse, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/customer_count")
+    public ResponseEntity<Long> getCustomerCount() {
+        long userCount = customerService.getCustomerCount();
+        return new ResponseEntity<>(userCount, HttpStatus.OK);
     }
 }

@@ -93,6 +93,11 @@ public class CarParkServiceImpl implements CarParkService {
     }
 
     @Override
+    public Long getCarParkCount() {
+        return carParkRepository.count();
+    }
+
+    @Override
     public PageResponse<CarParksDistanceDto> findCarParksForUser(String countryName,
                                                                  String cityName,
                                                                  LocalDateTime startDateTime,

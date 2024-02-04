@@ -35,4 +35,6 @@ public interface ReservationService {
                                                       Double costMax,
                                                       Pageable pageable);
 
+    long getReservationCount();
+
 }
