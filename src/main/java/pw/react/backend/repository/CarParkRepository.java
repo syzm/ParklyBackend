@@ -32,16 +32,19 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
             "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name = :countryName) " +
             "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
             "AND cp.isActive = true " +
-            "AND (:startDateTime IS NULL OR :endDateTime IS NULL OR NOT EXISTS (" +
-            "    SELECT 1 FROM Reservation r " +
-            "    WHERE r.spot.carPark = cp AND r.status = 'ACTIVE' AND " +
-            "    ((:startDateTime BETWEEN r.startDate AND r.endDate) OR " +
-            "    (:endDateTime BETWEEN r.startDate AND r.endDate) OR " +
-            "    (:startDateTime <= r.startDate AND :endDateTime >= r.endDate)) " +
-            ")) " +
+            "AND EXISTS (" +
+            "    SELECT 1 FROM Spot s " +
+            "    WHERE s.carPark = cp " +
+            "    AND NOT EXISTS (" +
+            "        SELECT 1 FROM Reservation r " +
+            "        WHERE r.spot = s AND r.status = 'ACTIVE' AND " +
+            "        ((:startDateTime BETWEEN r.startDate AND r.endDate) OR " +
+            "        (:endDateTime BETWEEN r.startDate AND r.endDate) OR " +
+            "        (:startDateTime <= r.startDate AND :endDateTime >= r.endDate))" +
+            "    )" +
+            ") " +
             "AND (:dailyCostMin IS NULL OR cp.dailyCost >= :dailyCostMin) " +
-            "AND (:dailyCostMax IS NULL OR cp.dailyCost <= :dailyCostMax) " +
-            "AND EXISTS (SELECT 1 FROM Spot s WHERE s.carPark = cp)")
+            "AND (:dailyCostMax IS NULL OR cp.dailyCost <= :dailyCostMax)")
     Page<CarPark> findCarParksForUser(
             @Param("countryName") String countryName,
             @Param("cityName") String cityName,

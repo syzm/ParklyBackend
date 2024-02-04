@@ -19,11 +19,11 @@ public class Reservation {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "spot_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "spot_id", referencedColumnName = "id")
     private Spot spot;
 
     @Column(name = "start_date", nullable = false)
