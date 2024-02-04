@@ -1,24 +1,22 @@
 package pw.react.backend.services.impl;
 
-import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dto.Reservation.ReservationCreationDto;
+import pw.react.backend.dto.Reservation.ReservationInfoDto;
 import pw.react.backend.enums.ReservationStatus;
 import pw.react.backend.exceptions.ResourceNotFoundException;
-import pw.react.backend.models.CarPark;
-import pw.react.backend.models.Reservation;
-import pw.react.backend.models.Spot;
-import pw.react.backend.models.User;
-import pw.react.backend.repository.CarParkRepository;
+import pw.react.backend.models.*;
 import pw.react.backend.repository.ReservationRepository;
-import pw.react.backend.repository.SpotRepository;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.ReservationService;
 import pw.react.backend.services.SpotService;
 import pw.react.backend.services.UserService;
 
 import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -72,8 +70,39 @@ public class ReservationServiceImpl implements ReservationService {
         Long externalUserId = reservationCreationDto.getExternalUserId();
         if (externalUserId != null && externalUserId >= 0)
             reservation.setExternalUserId(externalUserId);
-        reservation.setCostEuros(cost);
+        reservation.setCost(cost);
 
         reservationRepository.save(reservation);
+    }
+
+    @Override
+    public ReservationInfoDto returnReservationInfo(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + reservationId));
+
+        return new ReservationInfoDto(reservation);
+    }
+
+    @Override
+    public PageResponse<ReservationInfoDto> getUserReservations(Long userId, Pageable pageable) {
+        Page<Reservation> userReservations = reservationRepository.findByUser_Id(userId, pageable);
+        return createReservationPageResponse(userReservations);
+    }
+
+    @Override
+    public PageResponse<ReservationInfoDto> getCarParkReservations(Long carParkId, Pageable pageable) {
+        Page<Reservation> carParkReservations = reservationRepository.findBySpot_CarPark_Id(carParkId, pageable);
+        return createReservationPageResponse(carParkReservations);
+    }
+
+
+    private PageResponse<ReservationInfoDto> createReservationPageResponse(Page<Reservation> reservationsPage) {
+        return new PageResponse<>(
+                reservationsPage.getContent().stream()
+                        .map(ReservationInfoDto::new)
+                        .collect(Collectors.toList()),
+                reservationsPage.getTotalElements(),
+                reservationsPage.getTotalPages()
+        );
     }
 }

@@ -16,9 +16,9 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
     @Query("SELECT cp FROM CarPark cp " +
             "WHERE (:dailyCostMin IS NULL OR cp.dailyCost > :dailyCostMin) " +
             "AND (:dailyCostMax IS NULL OR cp.dailyCost < :dailyCostMax) " +
-            "AND (:iso3166Name IS NULL OR cp.street.city.country.iso3166Name = :iso3166Name) " +
-            "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
-            "AND (:streetName IS NULL OR cp.street.name = :streetName) " +
+            "AND (:iso3166Name IS NULL OR cp.street.city.country.iso3166Name LIKE %:iso3166Name%) " +
+            "AND (:cityName IS NULL OR cp.street.city.name LIKE %:cityName%) " +
+            "AND (:streetName IS NULL OR cp.street.name LIKE %:streetName%) " +
             "AND (:isActive IS NULL OR cp.isActive = :isActive)")
     Page<CarPark> findByFilters(@Param("dailyCostMin") Double dailyCostMin,
                                 @Param("dailyCostMax") Double dailyCostMax,
@@ -29,8 +29,8 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
                                 Pageable pageable);
 
     @Query("SELECT cp FROM CarPark cp " +
-            "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name = :countryName) " +
-            "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
+            "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name LIKE %:countryName%) " +
+            "AND (:cityName IS NULL OR cp.street.city.name LIKE %:cityName%) " +
             "AND cp.isActive = true " +
             "AND (:startDateTime IS NULL OR :endDateTime IS NULL OR NOT EXISTS (" +
             "    SELECT 1 FROM Reservation r " +

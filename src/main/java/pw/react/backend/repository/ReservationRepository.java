@@ -1,5 +1,7 @@
 package pw.react.backend.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("spotId") Long spotId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    Page<Reservation> findByUser_Id(Long userId, Pageable pageable);
+
+    Page<Reservation> findBySpot_CarPark_Id(Long carParkId, Pageable pageable);
 }

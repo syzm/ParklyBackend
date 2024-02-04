@@ -40,5 +40,5 @@ public class Reservation {
     private Long externalUserId;
 
     @Column(name = "cost_euros", nullable = false)
-    private Double costEuros;
+    private Double cost;
 }
