@@ -15,11 +15,14 @@ import pw.react.backend.dto.Reservation.ReservationInfoDto;
 import pw.react.backend.dto.Reservation.ReservationPatchDto;
 import pw.react.backend.dto.User.AdminCreationDto;
 import pw.react.backend.dto.User.CustomerInfoDto;
+import pw.react.backend.enums.ReservationStatus;
 import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.ReservationService;
 import pw.react.backend.services.UserService;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(path = AdminReservationController.ADMIN_PATH)
@@ -31,21 +34,6 @@ public class AdminReservationController {
 
     public AdminReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/user")
-    public ResponseEntity<PageResponse<ReservationInfoDto>> getUserReservations(
-            @RequestParam Long userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
-            PageResponse<ReservationInfoDto> userReservations = reservationService.getUserReservations(userId, pageable);
-            return ResponseEntity.status(HttpStatus.OK).body(userReservations);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -90,5 +78,24 @@ public class AdminReservationController {
         }
     }
 
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping
+    public ResponseEntity<PageResponse<ReservationInfoDto>> findReservationsByParameters(
+            @RequestParam(name = "userId", required = false) Long userId,
+            @RequestParam(name = "spotId", required = false) Long spotId,
+            @RequestParam(name = "startDate", required = false) LocalDateTime startDate,
+            @RequestParam(name = "endDate", required = false) LocalDateTime endDate,
+            @RequestParam(name = "status", required = false) ReservationStatus status,
+            @RequestParam(name = "externalUserId", required = false) Long externalUserId,
+            @RequestParam(name = "costMin", required = false) Double costMin,
+            @RequestParam(name = "costMax", required = false) Double costMax,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageResponse<ReservationInfoDto> reservationsPageResponse = reservationService.getByParameters(
+                userId, spotId, startDate, endDate, status, externalUserId, costMin, costMax, pageable
+        );
+        return new ResponseEntity<>(reservationsPageResponse, HttpStatus.OK);
+    }
 }

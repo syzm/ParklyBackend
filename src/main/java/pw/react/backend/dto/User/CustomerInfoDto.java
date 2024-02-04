@@ -14,6 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CustomerInfoDto {
     @NotBlank
+    private long userId;
+
+    @NotBlank
     private String firstName;
 
     @NotBlank

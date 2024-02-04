@@ -10,6 +10,7 @@ public class CustomerMapper {
         User user = customer.getUser();
 
         return new CustomerInfoDto(
+                customer.getUser().getId(),
                 customer.getFirstName(),
                 customer.getLastName(),
                 customer.getBirthDate(),

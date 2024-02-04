@@ -35,12 +35,9 @@ public class AdminController {
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
     static final String ADMIN_PATH = "/admin";
     private final UserService userService;
-    private final ReservationService reservationService;
 
-    public AdminController(UserService userService,
-                           ReservationService reservationService) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.reservationService = reservationService;
     }
     @PostMapping("/register")
     public ResponseEntity<Void> createAdmin(@RequestBody AdminCreationDto adminCreationDto) {
@@ -66,26 +63,5 @@ public class AdminController {
                 firstName, lastName, email, pageable
         );
         return new ResponseEntity<>(customersPageResponse, HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/reservations")
-    public ResponseEntity<PageResponse<ReservationInfoDto>> findReservationsByParameters(
-            @RequestParam(name = "userId", required = false) Long userId,
-            @RequestParam(name = "spotId", required = false) Long spotId,
-            @RequestParam(name = "startDate", required = false) LocalDateTime startDate,
-            @RequestParam(name = "endDate", required = false) LocalDateTime endDate,
-            @RequestParam(name = "status", required = false) ReservationStatus status,
-            @RequestParam(name = "externalUserId", required = false) Long externalUserId,
-            @RequestParam(name = "costMin", required = false) Double costMin,
-            @RequestParam(name = "costMax", required = false) Double costMax,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size);
-        PageResponse<ReservationInfoDto> reservationsPageResponse = reservationService.getByParameters(
-                userId, spotId, startDate, endDate, status, externalUserId, costMin, costMax, pageable
-        );
-        return new ResponseEntity<>(reservationsPageResponse, HttpStatus.OK);
     }
 }
