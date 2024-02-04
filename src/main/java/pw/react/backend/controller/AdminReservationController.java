@@ -78,4 +78,17 @@ public class AdminReservationController {
         }
     }
 
+    // endpoint for updating reservation status (get the ones that finished)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping("/refresh")
+    public ResponseEntity<String> refreshReservation() {
+        try {
+            reservationService.refreshReservations();
+            return ResponseEntity.status(HttpStatus.OK).body("Reservations refreshed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error refreshing reservations");
+        }
+    }
+
+
 }

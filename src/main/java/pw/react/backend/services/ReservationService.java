@@ -18,4 +18,6 @@ public interface ReservationService {
 
     void patchReservation(Long reservationId, ReservationPatchDto reservationPatchDto);
 
+    void refreshReservations();
+
 }

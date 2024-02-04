@@ -17,7 +17,9 @@ import pw.react.backend.services.ReservationService;
 import pw.react.backend.services.SpotService;
 import pw.react.backend.services.UserService;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static pw.react.backend.utils.Utils.getNullPropertyNames;
@@ -135,6 +137,19 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         reservationRepository.save(existingReservation);
+    }
+
+    @Override
+    public void refreshReservations() {
+        LocalDateTime currentDate = LocalDateTime.now();
+        List<Reservation> activeReservations =
+                reservationRepository.findByEndDateBeforeAndStatus(currentDate, ReservationStatus.ACTIVE);
+
+        for (Reservation reservation : activeReservations) {
+            reservation.setStatus(ReservationStatus.ARCHIVED);
+        }
+
+        reservationRepository.saveAll(activeReservations);
     }
 
 
