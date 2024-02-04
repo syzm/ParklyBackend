@@ -5,10 +5,17 @@ import pw.react.backend.dto.User.CustomerCreationDto;
 import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.dto.User.CustomerPatchDto;
 import pw.react.backend.exceptions.ResourceNotFoundException;
+import org.springframework.data.domain.Pageable;
+import pw.react.backend.models.PageResponse;
 
 public interface UserService {
        void createCustomer(CustomerCreationDto customerCreationDto);
        void createAdmin(AdminCreationDto adminCreationDto);
        CustomerInfoDto getCustomerByUserId(Long id) throws ResourceNotFoundException;
        void updateCustomer(Long id, CustomerPatchDto updatedCustomer);
+
+       PageResponse<CustomerInfoDto> findCustomersByParameters(String firstName,
+                                                               String lastName,
+                                                               String email,
+                                                               Pageable pageable);
 }
