@@ -19,8 +19,14 @@ import pw.react.backend.repository.CustomerRepository;
 import pw.react.backend.repository.UserRepository;
 import pw.react.backend.services.UserService;
 import pw.react.backend.utils.Utils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import pw.react.backend.models.PageResponse;
+import java.util.List;
+import pw.react.backend.mapper.CustomerMapper;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -119,6 +125,23 @@ public class UserMainService implements UserService {
     public User getUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    @Override
+    public PageResponse<CustomerInfoDto> findCustomersByParameters(String firstName,
+                                                            String lastName,
+                                                            String email,
+                                                            Pageable pageable) {
+        Page<Customer> filteredCustomers = userRepository.findCustomersByParameters(
+                firstName, lastName, email, pageable
+        );
+
+        List<CustomerInfoDto> customers = filteredCustomers.stream()
+                .map(CustomerMapper::mapToDto)
+                .collect(Collectors.toList());
+
+        long totalElements = filteredCustomers.getTotalElements();
+        int totalPages = filteredCustomers.getTotalPages();
+
+        return new PageResponse<>(customers, totalElements, totalPages);
     }
 
     private boolean isValidUser(User user) {
