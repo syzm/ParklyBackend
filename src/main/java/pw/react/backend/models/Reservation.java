@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pw.react.backend.enums.ReservationStatus;
 
 import java.time.LocalDateTime;
 
@@ -31,8 +32,9 @@ public class Reservation {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
-    @Column(name = "canceled", nullable = false)
-    private boolean canceled;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status;
 
     @Column(name = "external_user_id", nullable = true)
     private Long externalUserId;

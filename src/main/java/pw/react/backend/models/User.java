@@ -4,16 +4,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pw.react.backend.enums.UserRole;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -32,11 +29,13 @@ public class User implements UserDetails {
     private String email;
 
     @Column(name = "role", nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
     @Override
     public String getPassword() {
         return password;
     }
+
     @Override
     public String getUsername() {
         return email;
@@ -44,7 +43,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
     @Override
     public boolean isAccountNonExpired() {

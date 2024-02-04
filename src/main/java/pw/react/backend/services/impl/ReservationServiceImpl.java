@@ -4,6 +4,7 @@ import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pw.react.backend.dto.Reservation.ReservationCreationDto;
+import pw.react.backend.enums.ReservationStatus;
 import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.models.CarPark;
 import pw.react.backend.models.Reservation;
@@ -66,7 +67,7 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setUser(user);
         reservation.setStartDate(reservationCreationDto.getStartDate());
         reservation.setEndDate(reservationCreationDto.getEndDate());
-        reservation.setCanceled(false);
+        reservation.setStatus(ReservationStatus.ACTIVE);
         reservation.setSpot(availableSpot);
         Long externalUserId = reservationCreationDto.getExternalUserId();
         if (externalUserId != null && externalUserId >= 0)

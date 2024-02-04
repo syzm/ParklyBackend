@@ -34,7 +34,7 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
             "AND cp.isActive = true " +
             "AND (:startDateTime IS NULL OR :endDateTime IS NULL OR NOT EXISTS (" +
             "    SELECT 1 FROM Reservation r " +
-            "    WHERE r.spot.carPark = cp AND r.canceled = false AND " +
+            "    WHERE r.spot.carPark = cp AND r.status = 'ACTIVE' AND " +
             "    ((:startDateTime BETWEEN r.startDate AND r.endDate) OR " +
             "    (:endDateTime BETWEEN r.startDate AND r.endDate) OR " +
             "    (:startDateTime <= r.startDate AND :endDateTime >= r.endDate)) " +
