@@ -39,6 +39,6 @@ public class Reservation {
     @Column(name = "external_user_id", nullable = true)
     private Long externalUserId;
 
-    @Column(name = "cost_euros", nullable = false)
+    @Column(nullable = false)
     private Double cost;
 }

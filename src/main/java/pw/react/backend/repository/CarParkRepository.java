@@ -29,8 +29,8 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
                                 Pageable pageable);
 
     @Query("SELECT cp FROM CarPark cp " +
-            "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name LIKE %:countryName%) " +
-            "AND (:cityName IS NULL OR cp.street.city.name LIKE %:cityName%) " +
+            "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name = :countryName) " +
+            "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
             "AND cp.isActive = true " +
             "AND (:startDateTime IS NULL OR :endDateTime IS NULL OR NOT EXISTS (" +
             "    SELECT 1 FROM Reservation r " +
