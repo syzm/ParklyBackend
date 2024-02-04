@@ -10,11 +10,11 @@ import pw.react.backend.dto.User.AdminCreationDto;
 import pw.react.backend.dto.User.CustomerCreationDto;
 import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.dto.User.CustomerPatchDto;
+import pw.react.backend.enums.UserRole;
 import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.Customer;
 import pw.react.backend.models.User;
-import pw.react.backend.models.UserRole;
 import pw.react.backend.repository.CustomerRepository;
 import pw.react.backend.repository.UserRepository;
 import pw.react.backend.services.UserService;
@@ -47,7 +47,7 @@ public class UserMainService implements UserService {
         User user = new User();
         user.setEmail(customerCreationDto.getEmail());
         user.setPassword(customerCreationDto.getPassword());
-        user.setRole(UserRole.ADMIN);
+        user.setRole(UserRole.CUSTOMER);
 
         if (isValidUser(user)) {
             log.info("User is valid");
@@ -74,7 +74,7 @@ public class UserMainService implements UserService {
         User user = new User();
         user.setEmail(adminCreationDto.getEmail());
         user.setPassword(adminCreationDto.getPassword());
-        user.setRole(UserRole.CUSTOMER);
+        user.setRole(UserRole.ADMIN);
 
         if (isValidUser(user)) {
             log.info("User is valid");
@@ -125,6 +125,8 @@ public class UserMainService implements UserService {
     public User getUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         return optionalUser.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    }
+
     @Override
     public PageResponse<CustomerInfoDto> findCustomersByParameters(String firstName,
                                                             String lastName,

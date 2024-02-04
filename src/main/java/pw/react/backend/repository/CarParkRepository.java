@@ -16,9 +16,9 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
     @Query("SELECT cp FROM CarPark cp " +
             "WHERE (:dailyCostMin IS NULL OR cp.dailyCost > :dailyCostMin) " +
             "AND (:dailyCostMax IS NULL OR cp.dailyCost < :dailyCostMax) " +
-            "AND (:iso3166Name IS NULL OR cp.street.city.country.iso3166Name = :iso3166Name) " +
-            "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
-            "AND (:streetName IS NULL OR cp.street.name = :streetName) " +
+            "AND (:iso3166Name IS NULL OR cp.street.city.country.iso3166Name LIKE %:iso3166Name%) " +
+            "AND (:cityName IS NULL OR cp.street.city.name LIKE %:cityName%) " +
+            "AND (:streetName IS NULL OR cp.street.name LIKE %:streetName%) " +
             "AND (:isActive IS NULL OR cp.isActive = :isActive)")
     Page<CarPark> findByFilters(@Param("dailyCostMin") Double dailyCostMin,
                                 @Param("dailyCostMax") Double dailyCostMax,
@@ -32,16 +32,19 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
             "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name = :countryName) " +
             "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
             "AND cp.isActive = true " +
-            "AND (:startDateTime IS NULL OR :endDateTime IS NULL OR NOT EXISTS (" +
-            "    SELECT 1 FROM Reservation r " +
-            "    WHERE r.spot.carPark = cp AND r.canceled = false AND " +
-            "    ((:startDateTime BETWEEN r.startDate AND r.endDate) OR " +
-            "    (:endDateTime BETWEEN r.startDate AND r.endDate) OR " +
-            "    (:startDateTime <= r.startDate AND :endDateTime >= r.endDate)) " +
-            ")) " +
+            "AND EXISTS (" +
+            "    SELECT 1 FROM Spot s " +
+            "    WHERE s.carPark = cp " +
+            "    AND NOT EXISTS (" +
+            "        SELECT 1 FROM Reservation r " +
+            "        WHERE r.spot = s AND r.status = 'ACTIVE' AND " +
+            "        ((:startDateTime BETWEEN r.startDate AND r.endDate) OR " +
+            "        (:endDateTime BETWEEN r.startDate AND r.endDate) OR " +
+            "        (:startDateTime <= r.startDate AND :endDateTime >= r.endDate))" +
+            "    )" +
+            ") " +
             "AND (:dailyCostMin IS NULL OR cp.dailyCost >= :dailyCostMin) " +
-            "AND (:dailyCostMax IS NULL OR cp.dailyCost <= :dailyCostMax) " +
-            "AND EXISTS (SELECT 1 FROM Spot s WHERE s.carPark = cp)")
+            "AND (:dailyCostMax IS NULL OR cp.dailyCost <= :dailyCostMax)")
     Page<CarPark> findCarParksForUser(
             @Param("countryName") String countryName,
             @Param("cityName") String cityName,

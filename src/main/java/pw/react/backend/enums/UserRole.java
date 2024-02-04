@@ -1,4 +1,4 @@
-package pw.react.backend.models;
+package pw.react.backend.enums;
 
 public enum UserRole {
     ADMIN,

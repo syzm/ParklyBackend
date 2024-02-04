@@ -14,6 +14,8 @@ import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
+import pw.react.backend.services.ReservationService;
+
 @RestController
 @RequestMapping(path = AdminCarParksController.PATH)
 public class AdminCarParksController {
@@ -21,9 +23,11 @@ public class AdminCarParksController {
     private static final Logger log = LoggerFactory.getLogger(AdminCarParksController.class);
     static final String PATH = "/admin/car_park";
     private final CarParkService carParkService;
+    private final ReservationService reservationService;
 
-    public AdminCarParksController(CarParkService carParkService) {
+    public AdminCarParksController(CarParkService carParkService, ReservationService reservationService) {
         this.carParkService = carParkService;
+        this.reservationService = reservationService;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -66,7 +70,17 @@ public class AdminCarParksController {
             @RequestBody CarParkPatchDto carParkPatchDto
     ) {
         carParkService.patchCarPark(carParkId, carParkPatchDto);
+        if (!carParkPatchDto.isActive()) {
+            reservationService.deactivateReservations(carParkId);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCarParkCount() {
+        long carParkCount = carParkService.getCarParkCount();
+        return new ResponseEntity<>(carParkCount, HttpStatus.OK);
     }
 
 }

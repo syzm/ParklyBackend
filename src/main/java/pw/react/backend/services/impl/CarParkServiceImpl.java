@@ -15,6 +15,7 @@ import pw.react.backend.models.*;
 import pw.react.backend.repository.CarParkRepository;
 import pw.react.backend.repository.StreetRepository;
 import pw.react.backend.services.CarParkService;
+import pw.react.backend.services.ReservationService;
 import pw.react.backend.services.StreetService;
 import pw.react.backend.utils.HaversineDistanceCalculator;
 import pw.react.backend.utils.Utils;
@@ -89,6 +90,11 @@ public class CarParkServiceImpl implements CarParkService {
     public CarPark getCarParkById(Long id) {
          Optional<CarPark> optionalCarPark = carParkRepository.findById(id);
         return optionalCarPark.orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    }
+
+    @Override
+    public Long getCarParkCount() {
+        return carParkRepository.count();
     }
 
     @Override

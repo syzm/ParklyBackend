@@ -34,4 +34,6 @@ public interface CarParkService {
     void patchCarPark(Long carParkId, CarParkPatchDto carParkPatchDto);
 
     CarPark getCarParkById(Long id);
+
+    Long getCarParkCount();
 }
