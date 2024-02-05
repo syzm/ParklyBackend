@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
+import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.ReservationService;
+import pw.react.backend.mapper.CarParkMapper;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = AdminCarParksController.PATH)
@@ -48,6 +52,7 @@ public class AdminCarParksController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<PageResponse<CarParkInfoDto>> getFilteredCarParks(
+            @RequestParam(name = "id", required = false, defaultValue = "0") long id,
             @RequestParam(name = "dailyCostMin", required = false) Double dailyCostMin,
             @RequestParam(name = "dailyCostMax", required = false) Double dailyCostMax,
             @RequestParam(name = "iso3166Name", required = false) String iso3166Name,
@@ -57,6 +62,13 @@ public class AdminCarParksController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
+        if(id!=0)
+        {
+            var car_park = CarParkMapper.mapToDto(carParkService.getCarParkById(id));
+            var pageResponse = new PageResponse<>(List.of(car_park), 1, 1);
+            return new ResponseEntity<>(pageResponse, HttpStatus.OK);
+        }
+
         Pageable pageable = PageRequest.of(page, size);
         PageResponse<CarParkInfoDto> pageResponse = carParkService.getFilteredCarParks(
                 dailyCostMin, dailyCostMax, iso3166Name, cityName, streetName, isActive, pageable);

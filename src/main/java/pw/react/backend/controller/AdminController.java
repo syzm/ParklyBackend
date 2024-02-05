@@ -28,6 +28,7 @@ import pw.react.backend.services.ReservationService;
 import pw.react.backend.enums.ReservationStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = AdminController.ADMIN_PATH)
@@ -56,12 +57,20 @@ public class AdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<PageResponse<CustomerInfoDto>> findCustomersByParameters(
+            @RequestParam(name = "userId", required = false, defaultValue = "0") long userId,
             @RequestParam(name = "firstName", required = false) String firstName,
             @RequestParam(name = "lastName", required = false) String lastName,
             @RequestParam(name = "email", required = false) String email,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
+        if(userId != 0) {
+            CustomerInfoDto customer = userService.getCustomerByUserId(userId);
+            var pageResponse = new PageResponse<>(List.of(customer), 1, 1);
+            return new ResponseEntity<>(pageResponse, HttpStatus.OK);
+        }
+
+
         Pageable pageable = PageRequest.of(page, size);
         PageResponse<CustomerInfoDto> customersPageResponse = userService.findCustomersByParameters(
                 firstName, lastName, email, pageable

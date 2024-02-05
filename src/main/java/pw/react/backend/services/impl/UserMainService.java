@@ -106,6 +106,7 @@ public class UserMainService implements UserService {
                         new ResourceNotFoundException("Customer does not exist for user ID " + id));
 
         CustomerInfoDto customerInfoDto = new CustomerInfoDto();
+        customerInfoDto.setUserId(id);
         customerInfoDto.setFirstName(customer.getFirstName());
         customerInfoDto.setLastName(customer.getLastName());
         customerInfoDto.setEmail(user.getEmail());
