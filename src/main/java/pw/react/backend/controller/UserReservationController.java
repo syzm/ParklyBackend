@@ -64,6 +64,23 @@ public class UserReservationController {
     }
 
     @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+    @GetMapping("/officely")
+    public ResponseEntity<PageResponse<ReservationInfoDto>> getExternalUserReservations(
+            @AuthenticationPrincipal User userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam Long externalUserId) {
+        try {
+            Long userId = userDetails.getId();
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
+            PageResponse<ReservationInfoDto> userReservations = reservationService.getExternalUserReservations(userId, externalUserId, pageable);
+            return ResponseEntity.status(HttpStatus.OK).body(userReservations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
     @PostMapping("/{reservationId}/cancel")
     public ResponseEntity<String> cancelReservation(@PathVariable Long reservationId,
                                                     @AuthenticationPrincipal User userDetails) {
@@ -79,4 +96,6 @@ public class UserReservationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error cancelling reservation");
         }
     }
+
+
 }

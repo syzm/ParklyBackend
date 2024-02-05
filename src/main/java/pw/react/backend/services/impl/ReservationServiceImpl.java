@@ -100,6 +100,13 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public PageResponse<ReservationInfoDto> getExternalUserReservations(Long userId, Long externalUserId, Pageable pageable) {
+        Page<Reservation> externalReservations = reservationRepository
+                .findByUser_IdAndExternalUserId(userId, externalUserId, pageable);
+        return createReservationPageResponse(externalReservations);
+    }
+
+    @Override
     public PageResponse<ReservationInfoDto> getCarParkReservations(Long carParkId, Pageable pageable) {
         Page<Reservation> carParkReservations = reservationRepository.findBySpot_CarPark_Id(carParkId, pageable);
         return createReservationPageResponse(carParkReservations);
