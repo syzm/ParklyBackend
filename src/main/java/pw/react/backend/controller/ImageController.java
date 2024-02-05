@@ -53,7 +53,7 @@ public class ImageController {
         imageService.uploadImage(imageDto);
     }
     
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')")
     @GetMapping(
         value = "/car_park/{carParkId}/image",
         produces = MediaType.IMAGE_JPEG_VALUE
