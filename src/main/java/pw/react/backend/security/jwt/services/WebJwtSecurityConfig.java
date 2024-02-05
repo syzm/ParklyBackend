@@ -20,6 +20,7 @@ import pw.react.backend.security.common.AuthenticationService;
 import pw.react.backend.security.common.CommonAuthenticationService;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Profile({"jwt"})
 public class WebJwtSecurityConfig {
@@ -46,9 +47,9 @@ public class WebJwtSecurityConfig {
     CorsConfigurationSource corsConfigurationSource(@Value("cors") String cors) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.stream(cors.split(",")).toList());
-        configuration.addAllowedOrigin("*");
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.addExposedHeader("*");
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -59,11 +60,7 @@ public class WebJwtSecurityConfig {
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(HttpMethod.POST, "/auth/login", "/users/register", "/admin/register")
-                            .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // Add a filter to validate the tokens with every request
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
