@@ -19,5 +19,7 @@ public interface UserService {
                                                                String lastName,
                                                                String email,
                                                                Pageable pageable);
+
+       boolean isEmailUsed(String email);
        User getUserById(Long id);
 }

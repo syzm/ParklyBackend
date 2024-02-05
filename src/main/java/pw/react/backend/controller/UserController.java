@@ -63,4 +63,19 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @PostMapping("/check-email")
+    public ResponseEntity<String> checkEmailAvailability(@RequestBody String email) {
+        try {
+            if (userService.isEmailUsed(email)) {
+                return ResponseEntity.ok("Email is already used");
+            } else {
+                return ResponseEntity.ok("Email is available");
+            }
+        } catch (Exception ex) {
+            log.error("Error checking email availability: {}", ex.getMessage());
+            throw new UserValidationException(ex.getMessage(), USERS_PATH);
+        }
+    }
+
 }

@@ -146,6 +146,12 @@ public class UserMainService implements UserService {
         return new PageResponse<>(customers, totalElements, totalPages);
     }
 
+    @Override
+    public boolean isEmailUsed(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.isPresent();
+    }
+
     private boolean isValidUser(User user) {
         if (user != null) {
             if (isValid(user.getUsername())) {
