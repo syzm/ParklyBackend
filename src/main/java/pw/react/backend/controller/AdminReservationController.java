@@ -3,7 +3,6 @@ package pw.react.backend.controller;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,14 +12,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.Reservation.ReservationInfoDto;
 import pw.react.backend.dto.Reservation.ReservationPatchDto;
-import pw.react.backend.dto.User.AdminCreationDto;
-import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.enums.ReservationStatus;
 import pw.react.backend.exceptions.ResourceNotFoundException;
-import pw.react.backend.exceptions.UserValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.ReservationService;
-import pw.react.backend.services.UserService;
 
 import java.time.LocalDateTime;
 

@@ -7,9 +7,7 @@ import pw.react.backend.models.CarPark;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.models.Spot;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface SpotService {
     void createSpot(SpotCreationDto spotCreationDto);

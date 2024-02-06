@@ -9,17 +9,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.Reservation.ReservationCreationDto;
 import pw.react.backend.dto.Reservation.ReservationInfoDto;
-import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.exceptions.ResourceNotFoundException;
 import pw.react.backend.exceptions.UnauthorizedException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.models.User;
-import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.ReservationService;
 
 @RestController

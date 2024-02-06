@@ -8,11 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pw.react.backend.dto.CarPark.CarParkCreationDto;
-import pw.react.backend.dto.CarPark.CarParkInfoDto;
-import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.dto.CarPark.CarParksDistanceDto;
-import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
 

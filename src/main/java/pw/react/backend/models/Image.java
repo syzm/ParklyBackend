@@ -28,6 +28,6 @@ public class Image {
     @JoinColumn(name = "car_park_id", nullable = false)
     private CarPark carPark;
 
-	@Column(name = "image", unique = false, nullable = false, length = 100000)
+	@Column(name = "image", nullable = false, length = 100000)
 	private byte[] image;
 }

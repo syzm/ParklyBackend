@@ -35,10 +35,7 @@ public class ImageServiceImpl implements ImageService {
         image.setCarPark(carPark);
         image.setImage(imageDto.getImage());
         Optional<Image> old_image = imageRepository.findByCarParkId(imageDto.getCarParkId());
-        if(old_image.isPresent())
-        {
-            imageRepository.delete(old_image.get());
-        }
+        old_image.ifPresent(imageRepository::delete);
         imageRepository.save(image);
     }
 

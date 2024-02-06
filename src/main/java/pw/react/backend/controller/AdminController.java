@@ -1,6 +1,5 @@
 package pw.react.backend.controller;
 
-import jakarta.persistence.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -9,25 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pw.react.backend.dto.CarPark.CarParkCreationDto;
-import pw.react.backend.dto.CarPark.CarParkInfoDto;
-import pw.react.backend.dto.CarPark.CarParkPatchDto;
-import pw.react.backend.dto.Spot.SpotCreationDto;
 import pw.react.backend.dto.User.AdminCreationDto;
 import pw.react.backend.dto.User.CustomerInfoDto;
-import pw.react.backend.dto.Reservation.ReservationInfoDto;
-import pw.react.backend.exceptions.CarParkValidationException;
 import pw.react.backend.exceptions.UserValidationException;
-import pw.react.backend.models.CarPark;
 import pw.react.backend.models.PageResponse;
-import pw.react.backend.models.Spot;
-import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.CustomerService;
 import pw.react.backend.services.UserService;
-import pw.react.backend.services.ReservationService;
-import pw.react.backend.enums.ReservationStatus;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

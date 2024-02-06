@@ -1,6 +1,8 @@
 package pw.react.backend.security.jwt.services;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,6 +17,8 @@ import pw.react.backend.security.common.CommonUserDetailsService;
 import pw.react.backend.security.jwt.filters.JwtAuthenticationEntryPoint;
 import pw.react.backend.security.jwt.filters.JwtRequestFilter;
 
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "jwt")
 @Profile("jwt")
 @Import(WebJwtSecurityConfig.class)
@@ -57,20 +61,5 @@ public class JwtConfig {
         return new JwtAuthenticationEntryPoint();
     }
 
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
-    public long getExpirationMs() {
-        return expirationMs;
-    }
-
-    public void setExpirationMs(long expirationMs) {
-        this.expirationMs = expirationMs;
-    }
 }
 

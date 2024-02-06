@@ -30,7 +30,6 @@ public interface CarParkRepository extends JpaRepository<CarPark, Long> {
 
     @Query("SELECT cp FROM CarPark cp " +
             "WHERE (:countryName IS NULL OR cp.street.city.country.iso3166Name = :countryName) " +
-            "AND (:cityName IS NULL OR cp.street.city.name = :cityName) " +
             "AND cp.isActive = true " +
             "AND EXISTS (" +
             "    SELECT 1 FROM Spot s " +

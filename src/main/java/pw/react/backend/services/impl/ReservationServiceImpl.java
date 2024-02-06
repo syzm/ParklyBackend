@@ -1,6 +1,5 @@
 package pw.react.backend.services.impl;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +22,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static pw.react.backend.utils.Utils.getNullPropertyNames;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -86,14 +83,6 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ReservationInfoDto returnReservationInfo(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + reservationId));
-
-        return new ReservationInfoDto(reservation);
-    }
-
-    @Override
     public PageResponse<ReservationInfoDto> getUserReservations(Long userId, Pageable pageable) {
         Page<Reservation> userReservations = reservationRepository.findByUser_Id(userId, pageable);
         return createReservationPageResponse(userReservations);
@@ -139,13 +128,12 @@ public class ReservationServiceImpl implements ReservationService {
             }
         }
 
-        Double newCost = reservationPatchDto.getCost();
-        if (newCost != null) {
-            if (newCost < 0.0) {
-                throw new IllegalArgumentException("Cost cannot be negative");
-            }
-            existingReservation.setCost(newCost);
+        double newCost = reservationPatchDto.getCost();
+        if (newCost < 0.0) {
+            throw new IllegalArgumentException("Cost cannot be negative");
         }
+            existingReservation.setCost(newCost);
+
 
         reservationRepository.save(existingReservation);
     }

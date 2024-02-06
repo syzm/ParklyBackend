@@ -6,11 +6,9 @@ import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.dto.CarPark.CarParksDistanceDto;
 import pw.react.backend.models.CarPark;
-import pw.react.backend.models.PageResponse;
-import pw.react.backend.models.Spot;
+import pw.react.backend.models.PageResponse;S
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface CarParkService {
     void createCarPark(CarParkCreationDto carParkCreationDto);

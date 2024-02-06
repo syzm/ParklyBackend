@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 public interface ReservationService {
     Double makeReservation(ReservationCreationDto reservationCreationDto, Long userId);
-    ReservationInfoDto returnReservationInfo(Long reservationId);
 
     PageResponse<ReservationInfoDto> getUserReservations(Long userId, Pageable pageable);
 

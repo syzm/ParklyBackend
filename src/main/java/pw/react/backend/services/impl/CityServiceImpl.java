@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import pw.react.backend.models.City;
 import pw.react.backend.models.Country;
 import pw.react.backend.repository.CityRepository;
-import pw.react.backend.repository.CountryRepository;
 import pw.react.backend.services.CityService;
 import pw.react.backend.services.CountryService;
 

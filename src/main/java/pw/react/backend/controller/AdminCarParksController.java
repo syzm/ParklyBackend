@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import pw.react.backend.dto.CarPark.CarParkCreationDto;
 import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
-import pw.react.backend.dto.User.CustomerInfoDto;
 import pw.react.backend.exceptions.CarParkValidationException;
+import pw.react.backend.mapper.CarParkMapper;
 import pw.react.backend.models.PageResponse;
 import pw.react.backend.services.CarParkService;
 import pw.react.backend.services.ReservationService;
-import pw.react.backend.mapper.CarParkMapper;
 
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class AdminCarParksController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        if(id!=0)
+        if(id != 0)
         {
             var car_park = CarParkMapper.mapToDto(carParkService.getCarParkById(id));
             var pageResponse = new PageResponse<>(List.of(car_park), 1, 1);

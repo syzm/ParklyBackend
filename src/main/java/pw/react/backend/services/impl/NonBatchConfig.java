@@ -6,7 +6,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pw.react.backend.repository.CustomerRepository;
 import pw.react.backend.repository.UserRepository;
 import pw.react.backend.services.UserService;
-import pw.react.backend.services.impl.UserMainService;
 
 @Profile("!batch")
 public class NonBatchConfig {
