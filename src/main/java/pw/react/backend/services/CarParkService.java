@@ -6,7 +6,7 @@ import pw.react.backend.dto.CarPark.CarParkInfoDto;
 import pw.react.backend.dto.CarPark.CarParkPatchDto;
 import pw.react.backend.dto.CarPark.CarParksDistanceDto;
 import pw.react.backend.models.CarPark;
-import pw.react.backend.models.PageResponse;S
+import pw.react.backend.models.PageResponse;
 
 import java.time.LocalDateTime;
 

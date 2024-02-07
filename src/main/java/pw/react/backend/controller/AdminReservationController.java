@@ -48,7 +48,7 @@ public class AdminReservationController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PatchMapping("/{reservationId}")
+    @PostMapping("/{reservationId}")
     public ResponseEntity<String> patchReservation(@PathVariable Long reservationId,
                                                    @RequestBody @Valid ReservationPatchDto reservationPatchDto) {
         try {

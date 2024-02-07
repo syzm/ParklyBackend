@@ -108,7 +108,7 @@ public class CarParkServiceImpl implements CarParkService {
                                                                  Pageable pageable) {
 
         Page<CarPark> filteredCarParks = carParkRepository.findCarParksForUser(
-                countryName, cityName, startDateTime, endDateTime, dailyCostMin, dailyCostMax,
+                countryName, startDateTime, endDateTime, dailyCostMin, dailyCostMax,
                 pageable);
 
         List<CarParksDistanceDto> carParks = filteredCarParks.getContent().stream()
